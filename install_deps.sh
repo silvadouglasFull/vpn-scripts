@@ -1,12 +1,16 @@
-#!bin/bash
+#!/bin/bash
 
 install_deps() {
 	echo "Verificando e instalando dependências..."
-
+	DISTRIBUTION=$(lsb_release -sc)
 	# Verifica se o sistema é baseado em Debian/Ubuntu
 	if command -v apt &>/dev/null; then
 		echo "Sistema baseado em Debian/Ubuntu detectado."
 		sudo apt update
+		sudo apt install apt-transport-https curl
+		mkdir -p /etc/apt/keyrings
+		sudo curl -sSfL https://packages.openvpn.net/packages-repo.gpg >/etc/apt/keyrings/openvpn.asc
+		sudo echo "deb [signed-by=/etc/apt/keyrings/openvpn.asc] https://packages.openvpn.net/openvpn3/debian $DISTRIBUTION main" >>/etc/apt/sources.list.d/openvpn3.list
 		sudo apt install -y openvpn3
 
 		# Verifica se a instalação foi bem-sucedida
